@@ -8,6 +8,7 @@ public class ParqueaderoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ParqueaderoApplication.class, args);
+		System.out.println("Aplicación iniciada correctamente");
 	}
 
 }

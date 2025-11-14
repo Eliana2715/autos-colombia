@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ParqueaderoApplication<parqueadero>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.autoscolombia.parqueadero.ParqueaderoApplication",
+            "projectName": "parqueadero",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
