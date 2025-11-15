@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Panel Principal</title>
+</head>
+<body>
+
+<h2>Bienvenido</h2>
+
+<p th:text="'Usuario: ' + ${usuario.nombre}"></p>
+
+<ul>
+    <li><a href="/entrada">Registrar entrada</a></li>
+    <li><a href="/salida">Registrar salida</a></li>
+    <li><a href="/vehiculos">Vehículos en parqueadero</a></li>
+    <li><a href="/pago">Registrar pago</a></li>
+</ul>
+
+</body>
+</html>
