@@ -1,13 +1,20 @@
 package com.autoscolombia.parqueadero.service;
 
-import com.autoscolombia.parqueadero.model.*;
-import com.autoscolombia.parqueadero.repository.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.autoscolombia.parqueadero.model.Celda;
+import com.autoscolombia.parqueadero.model.Registro;
+import com.autoscolombia.parqueadero.model.Usuario;
+import com.autoscolombia.parqueadero.model.Vehiculo;
+import com.autoscolombia.parqueadero.repository.CeldaRepository;
+import com.autoscolombia.parqueadero.repository.RegistroRepository;
+import com.autoscolombia.parqueadero.repository.UsuarioRepository;
+import com.autoscolombia.parqueadero.repository.VehiculoRepository;
 
 @Service
 public class VehiculoService {
@@ -18,16 +25,16 @@ public class VehiculoService {
     private final UsuarioRepository usuarioRepository;
 
     public VehiculoService(VehiculoRepository vehiculoRepository,
-                        RegistroRepository registroRepository,
-                        CeldaRepository celdaRepository,
-                        UsuarioRepository usuarioRepository) {
+                           RegistroRepository registroRepository,
+                           CeldaRepository celdaRepository,
+                           UsuarioRepository usuarioRepository) {
         this.vehiculoRepository = vehiculoRepository;
         this.registroRepository = registroRepository;
         this.celdaRepository = celdaRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
-    // CRUD básico
+    // CRUD
     public List<Vehiculo> listarTodos() {
         return vehiculoRepository.findAll();
     }
@@ -48,13 +55,31 @@ public class VehiculoService {
         vehiculoRepository.deleteById(id);
     }
 
-    // ===========================
-    // Funciones para mockups
-    // ===========================
+    // ======================
+    // Funciones del flujo
+    // ======================
 
-    // 1️⃣ Registrar entrada
+    // 1️⃣ Vehículos con registro activo
+    public List<Registro> listarVehiculosActivos() {
+        return registroRepository.findByEstado("ABIERTA");
+    }
+
+    // 2️⃣ Listar celdas libres
+    public List<Celda> listarCeldasLibres() {
+        return celdaRepository.findAll().stream()
+                .filter(c -> c.getEstado().equalsIgnoreCase("libre"))
+                .toList();
+    }
+
+    // 3️⃣ Listar usuarios
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    // 4️⃣ Registrar entrada al parqueadero
     @Transactional
     public void registrarEntrada(Vehiculo vehiculo, Long usuarioId, Long celdaId) {
+
         if (vehiculo.getVehiculoId() == null) {
             vehiculoRepository.save(vehiculo);
         }
@@ -75,12 +100,15 @@ public class VehiculoService {
         celdaRepository.save(celda);
     }
 
-    // 2️⃣ Listar vehículos activos
-    public List<Registro> listarVehiculosActivos() {
-        return registroRepository.findByEstado("ABIERTA");
+    // 5️⃣ Buscar registro activo por vehículo
+    public Registro buscarRegistroActivoPorVehiculo(Long vehiculoId) {
+        return registroRepository.findByEstado("ABIERTA").stream()
+                .filter(r -> r.getVehiculo().getVehiculoId().equals(vehiculoId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay registro activo para este vehículo"));
     }
 
-    // 3️⃣ Registrar salida
+    // 6️⃣ Registrar salida
     @Transactional
     public void registrarSalida(Long registroId) {
         Registro registro = registroRepository.findById(registroId).orElseThrow();
@@ -96,16 +124,19 @@ public class VehiculoService {
         celdaRepository.save(celda);
     }
 
-    // 4️⃣ Calcular tiempo y valor
+    // 7️⃣ Calcular tiempo y cobro
     public void calcularTiempoYValor(Registro registro) {
         if (registro.getFechaIngreso() != null && registro.getFechaSalida() != null) {
             Duration duracion = Duration.between(registro.getFechaIngreso(), registro.getFechaSalida());
             long minutos = duracion.toMinutes();
             long horas = minutos / 60;
             long mins = minutos % 60;
+
             registro.setTiempoTotal(horas + "h " + mins + "m");
 
-            registro.setValorPagar(Math.ceil(minutos / 60.0) * 5000);
+            double valor = Math.ceil(minutos / 60.0) * 5000;
+            registro.setValorPagar(valor);
         }
     }
 }
+

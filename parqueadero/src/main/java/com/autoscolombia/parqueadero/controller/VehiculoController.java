@@ -1,13 +1,17 @@
 package com.autoscolombia.parqueadero.controller;
 
-import com.autoscolombia.parqueadero.model.Celda;
-import com.autoscolombia.parqueadero.model.Registro;
-import com.autoscolombia.parqueadero.model.Usuario;
-import com.autoscolombia.parqueadero.model.Vehiculo;
-import com.autoscolombia.parqueadero.service.VehiculoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.autoscolombia.parqueadero.model.Registro;
+import com.autoscolombia.parqueadero.model.Vehiculo;
+import com.autoscolombia.parqueadero.service.VehiculoService;
 
 @Controller
 @RequestMapping("/vehiculos")
@@ -35,8 +39,8 @@ public class VehiculoController {
 
     @PostMapping("/guardar")
     public String guardarVehiculo(@ModelAttribute Vehiculo vehiculo,
-                                @RequestParam Long usuarioId,
-                                @RequestParam Long celdaId) {
+                                  @RequestParam Long usuarioId,
+                                  @RequestParam Long celdaId) {
         vehiculoService.registrarEntrada(vehiculo, usuarioId, celdaId);
         return "redirect:/vehiculos";
     }
@@ -47,7 +51,6 @@ public class VehiculoController {
         vehiculoService.calcularTiempoYValor(registro);
         model.addAttribute("registro", registro);
         return "vehiculo-salida";
-
     }
 
     @GetMapping("/editar/{id}")
@@ -61,20 +64,6 @@ public class VehiculoController {
         vehiculoService.eliminarVehiculo(id);
         return "redirect:/vehiculos";
     }
-    public List<Celda> listarCeldasLibres() {
-    return celdaRepository.findAll().stream()
-            .filter(c -> "libre".equalsIgnoreCase(c.getEstado()))
-            .toList();
 }
 
-public List<Usuario> listarUsuarios() {
-    return usuarioRepository.findAll();
-}
 
-public Registro buscarRegistroActivoPorVehiculo(Long vehiculoId) {
-    return registroRepository.findByEstado("ABIERTA").stream()
-            .filter(r -> r.getVehiculo().getVehiculoId().equals(vehiculoId))
-            .findFirst()
-            .orElseThrow();
-}
-}

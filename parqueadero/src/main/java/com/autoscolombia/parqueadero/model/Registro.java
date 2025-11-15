@@ -1,7 +1,12 @@
 package com.autoscolombia.parqueadero.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Registro {
@@ -21,10 +26,16 @@ public class Registro {
     private LocalDateTime fechaSalida;
     private String estado; // ABIERTA, CERRADA
 
+    // 👉 Campos faltantes
+    private String tiempoTotal;
+    private Double valorPagar;
+
     public void cerrarRegistro(LocalDateTime salida){
         this.fechaSalida = salida;
         this.estado = "CERRADA";
     }
+
+    // ===== GETTERS & SETTERS =====
 
     public Long getRegistroId() {
         return registroId;
@@ -80,7 +91,22 @@ public class Registro {
 
     public void setEstado(String estado) {
         this.estado = estado;
-    } 
+    }
 
-    
+    public String getTiempoTotal() {
+        return tiempoTotal;
+    }
+
+    public void setTiempoTotal(String tiempoTotal) {
+        this.tiempoTotal = tiempoTotal;
+    }
+
+    public Double getValorPagar() {
+        return valorPagar;
+    }
+
+    public void setValorPagar(Double valorPagar) {
+        this.valorPagar = valorPagar;
+    }
 }
+
