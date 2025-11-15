@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### conexion bd ###
-/application.properties
+parqueadero/src/main/resources/application.properties
