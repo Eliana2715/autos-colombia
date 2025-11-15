@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.autoscolombia.parqueadero.service.UsuarioService;
 import com.autoscolombia.parqueadero.model.Usuario;
 
-@RestController
+@Controller
 public class HomeController {
 
     private final UsuarioService usuarioService;
