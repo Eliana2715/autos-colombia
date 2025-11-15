@@ -1,25 +1,33 @@
 package com.autoscolombia.parqueadero.model;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
-public class Usuario {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long usuarioId;
+public class Login {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idUsuario;
+
     private String nombre;
     private String documento;
     private String telefono;
     private String correo;
     private String rol;
+
+    private String username;
+    private String password;
+
     
-    public Long getUsuarioId() {
-        return usuarioId;
+
+
+    public Long getIdUsuario() {
+        return idUsuario;
     }
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
     }
     public String getNombre() {
         return nombre;
@@ -49,7 +57,20 @@ public class Usuario {
         return rol;
     }
     public void setRol(String rol) {
-        this.rol= rol;
+        this.rol = rol;
     }
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     
 }
