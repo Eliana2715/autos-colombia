@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Celda</title>
+</head>
+<body>
+
+<h2 th:text="${celda.celdaId != null} ? 'Editar Celda' : 'Registrar Celda'"></h2>
+
+<form method="post" th:action="@{/celdas}" th:object="${celda}">
+    
+    <input type="hidden" th:field="*{celdaId}" />
+
+    <label>Código:</label>
+    <input type="text" th:field="*{codigo}" required />
+    <br><br>
+
+    <label>Tipo:</label>
+    <select th:field="*{tipo}">
+        <option value="Carro">Carro</option>
+        <option value="Moto">Moto</option>
+    </select>
+    <br><br>
+
+    <label>Estado:</label>
+    <select th:field="*{estado}">
+        <option value="LIBRE">LIBRE</option>
+        <option value="OCUPADA">OCUPADA</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Guardar</button>
+    <a href="/celdas">Cancelar</a>
+</form>
+
+</body>
+</html>

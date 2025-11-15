@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Celdas</title>
+</head>
+<body>
+
+<h2>Listado de Celdas</h2>
+
+<a href="/panel">Volver al Panel</a> | 
+<a href="/celdas/nuevo">Registrar Nueva Celda</a>
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr th:each="celda : ${celdas}">
+            <td th:text="${celda.celdaId}"></td>
+            <td th:text="${celda.codigo}"></td>
+            <td th:text="${celda.tipo}"></td>
+            <td th:text="${celda.estado}"></td>
+
+            <td>
+                <a th:href="@{'/celdas/editar/' + ${celda.celdaId}}">Editar</a> |
+                <a th:href="@{'/celdas/eliminar/' + ${celda.celdaId}}"
+                   onclick="return confirm('¿Deseas eliminar esta celda?')">Eliminar</a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
