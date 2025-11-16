@@ -26,16 +26,15 @@ public class Registro {
     private LocalDateTime fechaSalida;
     private String estado; // ABIERTA, CERRADA
 
-    // 👉 Campos faltantes
+    
     private String tiempoTotal;
     private Double valorPagar;
+    
 
     public void cerrarRegistro(LocalDateTime salida){
         this.fechaSalida = salida;
         this.estado = "CERRADA";
     }
-
-    // ===== GETTERS & SETTERS =====
 
     public Long getRegistroId() {
         return registroId;
@@ -108,5 +107,8 @@ public class Registro {
     public void setValorPagar(Double valorPagar) {
         this.valorPagar = valorPagar;
     }
+
+    
+    
 }
 

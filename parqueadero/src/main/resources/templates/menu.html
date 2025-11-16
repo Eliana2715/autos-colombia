@@ -21,26 +21,34 @@
     <p>Seleccione una opción:</p>
     <div class="list-group">
 
-        <!-- Opción visible para ADMIN y EMPLEADO -->
-        <a th:href="@{/vehiculos}" class="list-group-item list-group-item-action"
-            th:if="${session.usuario.rol == 'ADMIN' or session.usuario.rol == 'EMPLEADO'}">
-            Gestión de Vehículos
-        </a>
+    <!-- ADMIN -->
+    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
+        Ver Registros
+    </a>
+    <a th:href="@{/registros/nuevo}" class="list-group-item list-group-item-action"
+        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
+            Registrar ingreso de vehículo
+    </a>
+    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
+        Registrar salida de vehículo
+    </a>
 
-        <!-- Opción visible solo para ADMIN -->
-        <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
-            th:if="${session.usuario.rol == 'ADMIN'}">
-            Ver Registros
-        </a>
+<!-- EMPLEADO -->
+    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+        th:if="${session.usuario != null and session.usuario.rol == 'EMPLEADO'}">
+        Registrar salida de vehículo
+    </a>
 
-        <!-- Opción visible solo para CAJERO -->
-        <a th:href="@{/pagos}" class="list-group-item list-group-item-action"
-            th:if="${session.usuario.rol == 'CAJERO'}">
-            Registrar Pagos
-        </a>
+<!-- CAJERO -->
+    <a th:href="@{/pagos}" class="list-group-item list-group-item-action"
+        th:if="${session.usuario != null and session.usuario.rol == 'CAJERO'}">
+        Registrar pagos
+    </a>
 
-        <a th:href="@{/logout}" class="list-group-item list-group-item-action list-group-item-danger">Cerrar sesión</a>
-    </div>
+    <a th:href="@{/logout}" class="list-group-item list-group-item-danger">Cerrar sesión</a>
+</div>
 </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
