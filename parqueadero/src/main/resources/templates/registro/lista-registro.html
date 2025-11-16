@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registros Activos</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2> Registros activos</h2>
+        <a th:href="@{/registros/nuevo}" class="btn btn-primary">Registrar entrada</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+
+            <table class="table table-striped table-hover text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Placa</th>
+                        <th>Celda</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Usuario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- Mostrar registros -->
+                    <tr th:each="r : ${registros}">
+                        <td th:text="${r.registroId}"></td>
+                        <td th:text="${r.vehiculo.placa}"></td>
+                        <td th:text="${r.celda != null ? r.celda.codigo : 'N/A'}"></td>
+                        <td th:text="${#temporals.format(r.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${r.usuario.nombre}"></td>
+                        
+                        <td>
+                            <a th:href="@{/registros/salida/{id}(id=${r.registroId})}"
+                               class="btn btn-success btn-sm">
+                                Registrar salida
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- Si no existen registros -->
+                    <tr th:if="${#lists.isEmpty(registros)}">
+                        <td colspan="6" class="text-muted">No hay vehículos registrados actualmente.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a th:href="@{/}" class="btn btn-secondary">Volver</a>
+    </div>
+
+</div>
+
+</body>
+</html>

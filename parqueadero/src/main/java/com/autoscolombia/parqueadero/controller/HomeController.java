@@ -6,34 +6,53 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.autoscolombia.parqueadero.service.UsuarioService;
 import com.autoscolombia.parqueadero.model.Usuario;
+import java.util.Optional;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class HomeController {
 
-    private final UsuarioService usuarioService;
-
-    public HomeController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping("/login")
-    public String mostrarLogin() {
-        return "login";
+    public String showLoginForm() {
+        return "login"; // tu login.html
     }
 
     @PostMapping("/login")
-    public String procesarLogin(@RequestParam String username,
-                                @RequestParam String password,
-                                Model model) {
+    public String processLogin(@RequestParam String username,
+                            @RequestParam String password,
+                            HttpSession session,
+                            Model model) {
 
-        Usuario usuario = usuarioService.validarLogin(username, password);
+        Optional<Usuario> usuarioOpt = usuarioService.validarUsuario(username, password);
 
-        if (usuario != null) {
-            model.addAttribute("usuario", usuario);
-            return "panel";  // Página principal después del login
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            session.setAttribute("usuario", usuario); // guardamos usuario en sesión
+
+            // Redirige según rol
+            switch (usuario.getRol()) {
+                case "ADMIN":
+                    return "redirect:/menu/admin";
+                case "EMPLEADO":
+                    return "redirect:/menu/empleado";
+                case "CAJERO":
+                    return "redirect:/menu/cajero";
+                default:
+                    return "redirect:/login";
+            }
         } else {
-            model.addAttribute("error", "Credenciales incorrectas");
+            model.addAttribute("error", "Usuario o contraseña incorrecta");
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
     }
 }

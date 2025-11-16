@@ -1,5 +1,7 @@
 package com.autoscolombia.parqueadero.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +28,7 @@ public class VehiculoController {
     @GetMapping
     public String listarVehiculos(Model model) {
         model.addAttribute("vehiculos", vehiculoService.listarVehiculosActivos());
-        return "vehiculos";
+        return "vehiculo/vehiculos";
     }
 
     @GetMapping("/nuevo")
@@ -34,29 +36,35 @@ public class VehiculoController {
         model.addAttribute("vehiculo", new Vehiculo());
         model.addAttribute("celdas", vehiculoService.listarCeldasLibres());
         model.addAttribute("usuarios", vehiculoService.listarUsuarios());
-        return "vehiculo-form";
+        return "vehiculo/vehiculo-form";
     }
 
     @PostMapping("/guardar")
     public String guardarVehiculo(@ModelAttribute Vehiculo vehiculo,
-                                  @RequestParam Long usuarioId,
-                                  @RequestParam Long celdaId) {
+                                @RequestParam Long usuarioId,
+                                @RequestParam Long celdaId) {
         vehiculoService.registrarEntrada(vehiculo, usuarioId, celdaId);
         return "redirect:/vehiculos";
     }
-
     @GetMapping("/salida/{id}")
     public String mostrarSalida(@PathVariable Long id, Model model) {
-        Registro registro = vehiculoService.buscarRegistroActivoPorVehiculo(id);
-        vehiculoService.calcularTiempoYValor(registro);
-        model.addAttribute("registro", registro);
-        return "vehiculo-salida";
+    Registro registro = vehiculoService.buscarRegistroActivoPorVehiculo(id);
+    registro.setFechaSalida(LocalDateTime.now());
+    vehiculoService.calcularTiempoYValor(registro);
+    model.addAttribute("registro", registro);
+    return "vehiculo/vehiculo-salida";
+}
+
+    @PostMapping("/salida")
+    public String procesarSalida(@RequestParam Long registroId) {
+        vehiculoService.registrarSalida(registroId);
+        return "redirect:/vehiculos";
     }
 
     @GetMapping("/editar/{id}")
     public String editarVehiculo(@PathVariable Long id, Model model) {
         model.addAttribute("vehiculo", vehiculoService.buscarPorId(id));
-        return "vehiculo-form";
+        return "vehiculo/vehiculo-form";
     }
 
     @GetMapping("/eliminar/{id}")

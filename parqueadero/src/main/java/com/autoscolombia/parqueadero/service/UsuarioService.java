@@ -1,9 +1,12 @@
 package com.autoscolombia.parqueadero.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.repository.UsuarioRepository;
-import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class UsuarioService {
@@ -12,6 +15,11 @@ public class UsuarioService {
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
+    }
+
+      // Método de login actualizado
+    public Optional<Usuario> validarUsuario(String username, String password) {
+        return usuarioRepository.findByUsernameAndPassword(username, password);
     }
 
     public List<Usuario> listarTodos() {
@@ -29,8 +37,5 @@ public class UsuarioService {
     public void eliminar(Long id) {
         usuarioRepository.deleteById(id);
     }
-    // Método para login
-    public Usuario validarLogin(String username, String password) {
-        return usuarioRepository.findByUsernameAndPassword(username, password);
-    }
+    
 }
