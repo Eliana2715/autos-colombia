@@ -31,7 +31,7 @@ public class VehiculoController {
         return "vehiculo/vehiculos";
     }
 
-    @GetMapping("/nuevo")
+    @GetMapping("/crear")
     public String mostrarFormularioCrear(Model model) {
         model.addAttribute("vehiculo", new Vehiculo());
         model.addAttribute("celdas", vehiculoService.listarCeldasLibres());

@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.autoscolombia.parqueadero.service.RegistroService;
 import com.autoscolombia.parqueadero.service.CeldaService;
+import com.autoscolombia.parqueadero.service.RegistroService;
 
 @Controller
 public class RegistroController {
@@ -41,7 +41,7 @@ public class RegistroController {
     }
 
     // Procesar entrada
-    @PostMapping("/entrada")
+    @PostMapping("/registros/entrada")
     public String registrarEntrada(
             @RequestParam String placa,
             @RequestParam String tipoVehiculo,
@@ -52,7 +52,7 @@ public class RegistroController {
         return "redirect:/registros/activos";
     }
 
-    @GetMapping("/salida/{id}")
+    @GetMapping("/registros/salida/{id}")
     public String registrarSalida(@PathVariable Long id) {
         registroService.registrarSalida(id);
         return "redirect:/registros/activos";
