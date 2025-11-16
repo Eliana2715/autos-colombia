@@ -24,7 +24,7 @@ public class CeldaService {
     }
 
     public Celda buscarPorId(Long id) {
-        return celdaRepository.findById(id).orElse(null);
+    return celdaRepository.findById(id).orElse(null);
     }
 
     public void eliminar(Long id) {
