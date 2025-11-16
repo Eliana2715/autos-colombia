@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.autoscolombia.parqueadero.model.Celda;
 import com.autoscolombia.parqueadero.model.Registro;
 import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.model.Vehiculo;
@@ -14,9 +15,11 @@ import com.autoscolombia.parqueadero.repository.RegistroRepository;
 public class RegistroService {
 
     private final RegistroRepository registroRepository;
+    private final CeldaService celdaService;
 
-    public RegistroService(RegistroRepository registroRepository) {
+    public RegistroService(RegistroRepository registroRepository, CeldaService celdaService) {
         this.registroRepository = registroRepository;
+        this.celdaService = celdaService;
     }
 
     public List<Registro> listar() {
@@ -27,7 +30,10 @@ public class RegistroService {
         return registroRepository.findByEstado("ABIERTA");
     }
 
-    public void registrarEntrada(String placa, String tipoVehiculo, Usuario usuario) {
+    public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Usuario usuario) {
+
+        Celda celda = celdaService.buscarPorId(celdaId);
+
         Vehiculo vehiculo = new Vehiculo();
         vehiculo.setPlaca(placa);
         vehiculo.setTipo(tipoVehiculo);

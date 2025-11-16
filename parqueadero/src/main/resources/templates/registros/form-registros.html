@@ -47,7 +47,7 @@
                     <select name="celdaId" class="form-select" required>
                         <option value="">Seleccione una celda</option>
                         <option th:each="c : ${celdas}"
-                                th:value="${c.id}"
+                                th:value="${c.celdaId}"
                                 th:text="${c.codigo}">
                         </option>
                     </select>

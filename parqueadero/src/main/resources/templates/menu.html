@@ -23,20 +23,14 @@
 
     <!-- ADMIN -->
     <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
-        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
-        Ver Registros
+    th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
+    Ver registros / Registrar salida de vehículo
     </a>
 
     <a th:href="@{/registros/nuevo}" class="list-group-item list-group-item-action"
-        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
-        Registrar ingreso de vehículo
+    th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
+    Registrar ingreso de vehículo
     </a>
-
-    <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
-        th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
-        Registrar salida de vehículo
-    </a>
-
 
     <!-- EMPLEADO -->
     <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"

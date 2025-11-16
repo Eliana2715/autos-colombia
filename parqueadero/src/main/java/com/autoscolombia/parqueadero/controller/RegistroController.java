@@ -43,14 +43,15 @@ public class RegistroController {
         return "registros/form-registros";
     }
 
-    @PostMapping("/registros/entrada")
+    @PostMapping("/entrada")
     public String registrarEntrada(
             @RequestParam String placa,
             @RequestParam String tipoVehiculo,
+            @RequestParam Long celdaId,
             @RequestParam Long usuarioId
     ) {
         Usuario usuario = usuarioService.obtenerPorId(usuarioId);
-        registroService.registrarEntrada(placa, tipoVehiculo, usuario);
+        registroService.registrarEntrada(placa, tipoVehiculo, celdaId, usuario);
         return "redirect:/registros/activos";
     }
 
