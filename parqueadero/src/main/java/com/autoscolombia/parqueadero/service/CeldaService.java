@@ -3,7 +3,6 @@ package com.autoscolombia.parqueadero.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-
 import com.autoscolombia.parqueadero.model.Celda;
 import com.autoscolombia.parqueadero.repository.CeldaRepository;
 
@@ -35,5 +34,5 @@ public class CeldaService {
     public List<Celda> listarDisponibles() {
         return celdaRepository.findByEstado("libre");
     }
-
 }
+

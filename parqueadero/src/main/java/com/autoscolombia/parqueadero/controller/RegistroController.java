@@ -7,56 +7,61 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.autoscolombia.parqueadero.service.RegistroService;
+import com.autoscolombia.parqueadero.model.Celda;
+import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.service.CeldaService;
+import com.autoscolombia.parqueadero.service.RegistroService;
+import com.autoscolombia.parqueadero.service.UsuarioService;
 
 @Controller
 public class RegistroController {
 
     private final RegistroService registroService;
     private final CeldaService celdaService;
+    private final UsuarioService usuarioService;
 
-    public RegistroController(RegistroService registroService, CeldaService celdaService) {
+    public RegistroController(RegistroService registroService, CeldaService celdaService, UsuarioService usuarioService) {
         this.registroService = registroService;
         this.celdaService = celdaService;
+        this.usuarioService = usuarioService;
     }
 
-    @GetMapping("/registros")
-    public String redirigirRegistros() {
-    return "redirect:/registros/activos";
-    }
-
-    // Mostrar registros activos (vehículos dentro del parqueadero)
+    // 1️⃣ Mostrar registros activos
     @GetMapping("/registros/activos")
     public String registrosActivos(Model model) {
         model.addAttribute("registros", registroService.listarActivos());
         return "registros/lista-registro";
     }
 
-    // Mostrar formulario de ingreso de vehículo
+    // 2️⃣ Formulario para nuevo registro
     @GetMapping("/registros/nuevo")
-    public String nuevoRegistro(Model model) {
-        model.addAttribute("celdas", celdaService.listarDisponibles());
-        return "registros/form-registros";
+    public String nuevoRegistro() {
+        return "registros/form-registros"; // solo formulario con campo placa
     }
 
-    // Procesar entrada
-    @PostMapping("/entrada")
-    public String registrarEntrada(
-            @RequestParam String placa,
-            @RequestParam String tipoVehiculo,
-            @RequestParam(required = false) String celdaCodigo,
-            @RequestParam Long usuarioId
-    ) {
-        registroService.registrarEntrada(placa, tipoVehiculo, celdaCodigo, usuarioId);
+    // 3️⃣ Registrar entrada
+    @PostMapping("/registros/entrada")
+    public String registrarEntrada(@RequestParam String placa) {
+        // Buscar celda libre automáticamente
+        Celda celda = celdaService.listarDisponibles().stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("No hay celdas disponibles"));
+
+        // Usar un usuario predeterminado
+        Usuario usuario = usuarioService.obtenerPorId(1L);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        // Registrar entrada
+        registroService.registroEntrada(placa, "DESCONOCIDO", celda, usuario);
+
         return "redirect:/registros/activos";
     }
 
-    @GetMapping("/salida/{id}")
+    //  Registrar salida
+    @GetMapping("/registros/salida/{id}")
     public String registrarSalida(@PathVariable Long id) {
         registroService.registrarSalida(id);
         return "redirect:/registros/activos";
     }
-
 }
-

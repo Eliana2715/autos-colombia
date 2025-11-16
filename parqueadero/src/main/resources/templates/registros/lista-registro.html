@@ -37,7 +37,7 @@
                     <tr th:each="r : ${registros}">
                         <td th:text="${r.registroId}"></td>
                         <td th:text="${r.vehiculo.placa}"></td>
-                        <td th:text="${r.celda != null ? r.celda.codigo : 'N/A'}"></td>
+                        <td th:text="${r.vehiculo.celda != null ? r.vehiculo.celda.codigo : 'N/A'}"></td>
                         <td th:text="${#temporals.format(r.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></td>
                         <td th:text="${r.usuario.nombre}"></td>
                         
