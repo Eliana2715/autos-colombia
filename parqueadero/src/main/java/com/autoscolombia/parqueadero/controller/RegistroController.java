@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.autoscolombia.parqueadero.model.Usuario;
+import com.autoscolombia.parqueadero.service.CeldaService;
 import com.autoscolombia.parqueadero.service.RegistroService;
 import com.autoscolombia.parqueadero.service.UsuarioService;
 
@@ -15,10 +16,12 @@ import com.autoscolombia.parqueadero.service.UsuarioService;
 public class RegistroController {
 
     private final RegistroService registroService;
+    private final CeldaService celdaService;
     private final UsuarioService usuarioService;
 
-    public RegistroController(RegistroService registroService, UsuarioService usuarioService) {
+    public RegistroController(RegistroService registroService, CeldaService celdaService, UsuarioService usuarioService) {
         this.registroService = registroService;
+        this.celdaService = celdaService;
         this.usuarioService = usuarioService;
     }
 
@@ -34,7 +37,9 @@ public class RegistroController {
     }
 
     @GetMapping("/registros/nuevo")
-    public String nuevoRegistro() {
+    public String nuevoRegistro(Model model) {
+        model.addAttribute("celdas", celdaService.listarDisponibles());
+        model.addAttribute("usuarios", usuarioService.listarTodos());
         return "registros/form-registros";
     }
 
@@ -44,15 +49,7 @@ public class RegistroController {
             @RequestParam String tipoVehiculo,
             @RequestParam Long usuarioId
     ) {
-        // Buscar usuario real
         Usuario usuario = usuarioService.obtenerPorId(usuarioId);
-        if (usuario == null) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-
-        // Aquí podrías validar el rol si quieres:
-        // if (!usuario.getRol().equals("ADMIN")) throw new RuntimeException("No tiene permisos");
-
         registroService.registrarEntrada(placa, tipoVehiculo, usuario);
         return "redirect:/registros/activos";
     }
@@ -63,3 +60,4 @@ public class RegistroController {
         return "redirect:/registros/activos";
     }
 }
+

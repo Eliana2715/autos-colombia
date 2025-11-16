@@ -19,29 +19,32 @@
     </p>
 
     <p>Seleccione una opción:</p>
-    <div class="list-group">
+<div class="list-group">
 
     <!-- ADMIN -->
-    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+    <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
         th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
         Ver Registros
     </a>
+
     <a th:href="@{/registros/nuevo}" class="list-group-item list-group-item-action"
         th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
-            Registrar ingreso de vehículo
+        Registrar ingreso de vehículo
     </a>
-    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+
+    <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
         th:if="${session.usuario != null and session.usuario.rol == 'ADMIN'}">
         Registrar salida de vehículo
     </a>
 
-<!-- EMPLEADO -->
-    <a th:href="@{/registros/lista}" class="list-group-item list-group-item-action"
+
+    <!-- EMPLEADO -->
+    <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
         th:if="${session.usuario != null and session.usuario.rol == 'EMPLEADO'}">
         Registrar salida de vehículo
     </a>
 
-<!-- CAJERO -->
+    <!-- CAJERO -->
     <a th:href="@{/pagos}" class="list-group-item list-group-item-action"
         th:if="${session.usuario != null and session.usuario.rol == 'CAJERO'}">
         Registrar pagos
