@@ -7,11 +7,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+<<<<<<< HEAD
 import com.autoscolombia.parqueadero.model.Celda;
 import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.service.CeldaService;
 import com.autoscolombia.parqueadero.service.RegistroService;
 import com.autoscolombia.parqueadero.service.UsuarioService;
+=======
+import com.autoscolombia.parqueadero.service.CeldaService;
+import com.autoscolombia.parqueadero.service.RegistroService;
+>>>>>>> f3f72ace26b40be4e6247d4e5841ba1f04c53507
 
 @Controller
 public class RegistroController {
@@ -39,6 +44,7 @@ public class RegistroController {
         return "registros/form-registros"; // solo formulario con campo placa
     }
 
+<<<<<<< HEAD
     // 3️⃣ Registrar entrada
     @PostMapping("/registros/entrada")
     public String registrarEntrada(@RequestParam String placa) {
@@ -59,6 +65,20 @@ public class RegistroController {
     }
 
     //  Registrar salida
+=======
+    // Procesar entrada
+    @PostMapping("/registros/entrada")
+    public String registrarEntrada(
+            @RequestParam String placa,
+            @RequestParam String tipoVehiculo,
+            @RequestParam(required = false) String celdaCodigo,
+            @RequestParam Long usuarioId
+    ) {
+        registroService.registrarEntrada(placa, tipoVehiculo, celdaCodigo, usuarioId);
+        return "redirect:/registros/activos";
+    }
+
+>>>>>>> f3f72ace26b40be4e6247d4e5841ba1f04c53507
     @GetMapping("/registros/salida/{id}")
     public String registrarSalida(@PathVariable Long id) {
         registroService.registrarSalida(id);
