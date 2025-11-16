@@ -21,18 +21,23 @@ public class RegistroController {
         this.celdaService = celdaService;
     }
 
+    @GetMapping("/registros")
+    public String redirigirRegistros() {
+    return "redirect:/registros/activos";
+    }
+
     // Mostrar registros activos (vehículos dentro del parqueadero)
     @GetMapping("/registros/activos")
     public String registrosActivos(Model model) {
         model.addAttribute("registros", registroService.listarActivos());
-        return "registros/lista-registros";
+        return "registros/lista-registro";
     }
 
     // Mostrar formulario de ingreso de vehículo
     @GetMapping("/registros/nuevo")
     public String nuevoRegistro(Model model) {
         model.addAttribute("celdas", celdaService.listarDisponibles());
-        return "registros/form-registro";
+        return "registros/form-registros";
     }
 
     // Procesar entrada

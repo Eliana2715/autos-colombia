@@ -28,7 +28,7 @@
         </a>
 
         <!-- Opción visible solo para ADMIN -->
-        <a th:href="@{/registros}" class="list-group-item list-group-item-action"
+        <a th:href="@{/registros/activos}" class="list-group-item list-group-item-action"
             th:if="${session.usuario.rol == 'ADMIN'}">
             Ver Registros
         </a>
