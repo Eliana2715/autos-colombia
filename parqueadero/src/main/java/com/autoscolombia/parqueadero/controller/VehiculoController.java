@@ -4,15 +4,11 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.autoscolombia.parqueadero.model.Registro;
 import com.autoscolombia.parqueadero.model.Vehiculo;
+import com.autoscolombia.parqueadero.service.RegistroService;
 import com.autoscolombia.parqueadero.service.VehiculoService;
 
 @Controller
@@ -20,9 +16,11 @@ import com.autoscolombia.parqueadero.service.VehiculoService;
 public class VehiculoController {
 
     private final VehiculoService vehiculoService;
+    private final RegistroService registroService; // 🔹 Inyectado
 
-    public VehiculoController(VehiculoService vehiculoService) {
+    public VehiculoController(VehiculoService vehiculoService, RegistroService registroService) {
         this.vehiculoService = vehiculoService;
+        this.registroService = registroService;
     }
 
     @GetMapping
@@ -46,18 +44,26 @@ public class VehiculoController {
         vehiculoService.registrarEntrada(vehiculo, usuarioId, celdaId);
         return "redirect:/vehiculos";
     }
+    
     @GetMapping("/salida/{id}")
     public String mostrarSalida(@PathVariable Long id, Model model) {
-    Registro registro = vehiculoService.buscarRegistroActivoPorVehiculo(id);
-    registro.setFechaSalida(LocalDateTime.now());
-    vehiculoService.calcularTiempoYValor(registro);
-    model.addAttribute("registro", registro);
-    return "vehiculo/vehiculo-salida";
-}
+        Registro registro = registroService.buscarPorId(id);
+
+        if (!"ABIERTA".equalsIgnoreCase(registro.getEstado())) {
+            throw new RuntimeException("El registro no está activo o ya fue cerrado");
+        }
+
+        // Hora de salida actual
+        LocalDateTime horaSalida = LocalDateTime.now();
+        model.addAttribute("registro", registro);
+        model.addAttribute("horaSalida", horaSalida);
+
+        return "vehiculo/vehiculo-salida";
+    }
 
     @PostMapping("/salida")
     public String procesarSalida(@RequestParam Long registroId) {
-        vehiculoService.registrarSalida(registroId);
+        registroService.registrarSalida(registroId); // 🔹 Todo el cálculo ocurre aquí
         return "redirect:/vehiculos";
     }
 
@@ -73,5 +79,3 @@ public class VehiculoController {
         return "redirect:/vehiculos";
     }
 }
-
-

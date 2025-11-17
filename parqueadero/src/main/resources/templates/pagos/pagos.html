@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Pagos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Listado de Pagos</h2>
+
+    <a href="/pagos/form-pago/1" class="btn btn-primary mb-3">Registrar Nuevo Pago</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID Pago</th>
+                <th>ID Registro</th>
+                <th>Monto</th>
+                <th>Tipo de Pago</th>
+                <th>Fecha de Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="pago : ${pagos}">
+                <td th:text="${pago.pagoId}"></td>
+                <td th:text="${pago.registro.registroId}"></td>
+                <td th:text="${pago.monto}"></td>
+                <td th:text="${pago.tipoPago}"></td>
+                <td th:text="${pago.fechaPago}"></td>
+
+            </tr>
+            <tr th:if="${#lists.isEmpty(pagos)}">
+                <td colspan="5" class="text-center">No hay pagos registrados.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

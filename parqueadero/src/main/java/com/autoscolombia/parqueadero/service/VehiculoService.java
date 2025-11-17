@@ -1,6 +1,5 @@
 package com.autoscolombia.parqueadero.service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +33,9 @@ public class VehiculoService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // CRUD
+    // ======================
+    // CRUD Vehículo
+    // ======================
     public List<Vehiculo> listarTodos() {
         return vehiculoRepository.findAll();
     }
@@ -79,13 +80,14 @@ public class VehiculoService {
     // 4️⃣ Registrar entrada al parqueadero
     @Transactional
     public void registrarEntrada(Vehiculo vehiculo, Long usuarioId, Long celdaId) {
-
         if (vehiculo.getVehiculoId() == null) {
             vehiculoRepository.save(vehiculo);
         }
 
-        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow();
-        Celda celda = celdaRepository.findById(celdaId).orElseThrow();
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
+        Celda celda = celdaRepository.findById(celdaId)
+                .orElseThrow(() -> new RuntimeException("Celda no encontrada con ID: " + celdaId));
 
         Registro registro = new Registro();
         registro.setVehiculo(vehiculo);
@@ -98,6 +100,8 @@ public class VehiculoService {
 
         celda.setEstado("ocupado");
         celdaRepository.save(celda);
+
+        System.out.println("Entrada registrada correctamente para vehículo: " + vehiculo.getPlaca());
     }
 
     // 5️⃣ Buscar registro activo por vehículo
@@ -108,35 +112,4 @@ public class VehiculoService {
                 .orElseThrow(() -> new RuntimeException("No hay registro activo para este vehículo"));
     }
 
-    // 6️⃣ Registrar salida
-    @Transactional
-    public void registrarSalida(Long registroId) {
-        Registro registro = registroRepository.findById(registroId).orElseThrow();
-        registro.setFechaSalida(LocalDateTime.now());
-        registro.setEstado("CERRADA");
-
-        calcularTiempoYValor(registro);
-
-        registroRepository.save(registro);
-
-        Celda celda = registro.getCelda();
-        celda.setEstado("libre");
-        celdaRepository.save(celda);
-    }
-
-    // 7️⃣ Calcular tiempo y cobro
-    public void calcularTiempoYValor(Registro registro) {
-        if (registro.getFechaIngreso() != null && registro.getFechaSalida() != null) {
-            Duration duracion = Duration.between(registro.getFechaIngreso(), registro.getFechaSalida());
-            long minutos = duracion.toMinutes();
-            long horas = minutos / 60;
-            long mins = minutos % 60;
-
-            registro.setTiempoTotal(horas + "h " + mins + "m");
-
-            double valor = Math.ceil(minutos / 60.0) * 5000;
-            registro.setValorPagar(valor);
-        }
-    }
 }
-

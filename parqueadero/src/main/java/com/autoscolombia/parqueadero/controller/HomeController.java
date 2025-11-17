@@ -1,14 +1,12 @@
 package com.autoscolombia.parqueadero.controller;
 
-
+import com.autoscolombia.parqueadero.model.Usuario;
+import com.autoscolombia.parqueadero.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.autoscolombia.parqueadero.service.UsuarioService;
-import com.autoscolombia.parqueadero.model.Usuario;
-import java.util.Optional;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class HomeController {
@@ -18,35 +16,36 @@ public class HomeController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login"; // tu login.html
+        return "login"; // login.html
     }
 
     @PostMapping("/login")
     public String processLogin(@RequestParam String username,
-                            @RequestParam String password,
-                            HttpSession session,
-                            Model model) {
+                               @RequestParam String password,
+                               HttpSession session,
+                               Model model) {
 
-        Optional<Usuario> usuarioOpt = usuarioService.validarUsuario(username, password);
+        Usuario usuario = usuarioService.validarUsuario(username, password)
+                                        .orElse(null);
 
-        if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get();
-            session.setAttribute("usuario", usuario); // guardamos usuario en sesión
-
-            // Redirige según rol
-            switch (usuario.getRol()) {
-                case "ADMIN":
-                    return "redirect:/menu/admin";
-                case "EMPLEADO":
-                    return "redirect:/menu/empleado";
-                case "CAJERO":
-                    return "redirect:/menu/cajero";
-                default:
-                    return "redirect:/login";
-            }
-        } else {
+        if (usuario == null) {
             model.addAttribute("error", "Usuario o contraseña incorrecta");
             return "login";
+        }
+
+        // Guardar usuario en sesión
+        session.setAttribute("usuario", usuario);
+
+        // Redirigir según rol
+        switch (usuario.getRol()) {
+            case "ADMIN":
+                return "redirect:/menu/admin";
+            case "EMPLEADO":
+                return "redirect:/menu/empleado";
+            case "CAJERO":
+                return "redirect:/menu/cajero";
+            default:
+                return "redirect:/login";
         }
     }
 

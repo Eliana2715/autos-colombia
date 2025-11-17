@@ -2,9 +2,7 @@ package com.autoscolombia.parqueadero.service;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.repository.UsuarioRepository;
 
@@ -25,6 +23,12 @@ public class UsuarioService {
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
+
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+    }
+
 
     public Usuario guardar(Usuario usuario) {
         return usuarioRepository.save(usuario);

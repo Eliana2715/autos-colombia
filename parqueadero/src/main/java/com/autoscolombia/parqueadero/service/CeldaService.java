@@ -15,6 +15,8 @@ public class CeldaService {
         this.celdaRepository = celdaRepository;
     }
 
+    
+
     public List<Celda> listar() {
         return celdaRepository.findAll();
     }
@@ -24,7 +26,11 @@ public class CeldaService {
     }
 
     public Celda buscarPorId(Long id) {
-    return celdaRepository.findById(id).orElse(null);
+        if (id == null) {
+            throw new IllegalArgumentException("Debe seleccionar una celda válida");
+        }
+        return celdaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Celda no encontrada con id: " + id));
     }
 
     public void eliminar(Long id) {
@@ -32,7 +38,25 @@ public class CeldaService {
     }
 
     public List<Celda> listarDisponibles() {
-        return celdaRepository.findByEstado("libre");
+        return celdaRepository.findByEstado("libre");  // assuming estado is 'libre' for free celdas
+    }
+
+    // ===========================================
+    // NUEVO: Método para marcar una celda como OCUPADA
+    // ===========================================
+    public void marcarOcupada(Long celdaId) {
+        Celda celda = buscarPorId(celdaId);
+        celda.setEstado("ocupada");  // Cambias el estado a ocupada
+        celdaRepository.save(celda);
+    }
+
+    // ===========================================
+    // NUEVO: Método para marcar una celda como DISPONIBLE
+    // ===========================================
+    public void marcarDisponible(Long celdaId) {
+        Celda celda = buscarPorId(celdaId);
+        celda.setEstado("libre");  // Cambias el estado a libre
+        celdaRepository.save(celda);
     }
 }
 

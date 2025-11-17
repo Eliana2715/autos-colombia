@@ -18,15 +18,15 @@ public class Pago {
     private LocalDateTime fechaPago;
 
     @Column(nullable = false)
-    private String tipoPago; // Nuevo campo: tipo de pago (Ej: EFECTIVO, TARJETA)
+    private String tipoPago; // Ej: EFECTIVO, TARJETA, etc.
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "registro_id", nullable = false)
-    private Registro registro;  // Relación con el registro de parqueo/salida
+    private Registro registro;;  // Registro asociado al pago
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;  // Cajero responsable del pago
+    private Usuario usuario;
 
     public Pago() {}
 
@@ -38,8 +38,7 @@ public class Pago {
         this.usuario = usuario;
     }
 
-    // Getters y Setters...
-
+    // Getters y Setters
     public Long getPagoId() {
         return pagoId;
     }

@@ -24,9 +24,7 @@ public class Registro {
 
     private LocalDateTime fechaIngreso;
     private LocalDateTime fechaSalida;
-    private String estado; // ABIERTA, CERRADA
-
-    
+    private String estado;
     private String tiempoTotal;
     private Double valorPagar;
     
