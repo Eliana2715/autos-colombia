@@ -4,37 +4,112 @@
     <meta charset="UTF-8">
     <title>Listado de Pagos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        /* Contenedor con efecto card */
+        .content-box {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            margin-top: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* Botón registrar */
+        .btn-add {
+            background-color: #0b4fa3;
+            color: white;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+        .btn-add:hover {
+            background-color: #083c7a;
+            color: white;
+        }
+
+        /* Tabla personalizada */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .custom-table thead th {
+            background: #e9ecef;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .custom-table tbody tr {
+            background: #ffffff;
+            transition: 0.2s;
+        }
+
+        .custom-table tbody tr:hover {
+            background: #eef5ff;
+        }
+
+        .custom-table tbody td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+    </style>
 </head>
+
 <body>
-<div class="container mt-5">
-    <h2>Listado de Pagos</h2>
 
-    <a href="/pagos/form-pago/1" class="btn btn-primary mb-3">Registrar Nuevo Pago</a>
+<div class="content-box">
+    <h2>📋 Listado de Pagos</h2>
 
-    <table class="table table-bordered">
+    <div class="d-flex justify-content-end mb-3">
+        <a href="/pagos/form-pago/1" class="btn-add">+ Registrar Nuevo Pago</a>
+    </div>
+
+    <table class="custom-table table">
         <thead>
-            <tr>
-                <th>ID Pago</th>
-                <th>ID Registro</th>
-                <th>Monto</th>
-                <th>Tipo de Pago</th>
-                <th>Fecha de Pago</th>
-            </tr>
+        <tr>
+            <th>ID Pago</th>
+            <th>ID Registro</th>
+            <th>Monto</th>
+            <th>Tipo de Pago</th>
+            <th>Fecha de Pago</th>
+        </tr>
         </thead>
-        <tbody>
-            <tr th:each="pago : ${pagos}">
-                <td th:text="${pago.pagoId}"></td>
-                <td th:text="${pago.registro.registroId}"></td>
-                <td th:text="${pago.monto}"></td>
-                <td th:text="${pago.tipoPago}"></td>
-                <td th:text="${pago.fechaPago}"></td>
 
-            </tr>
-            <tr th:if="${#lists.isEmpty(pagos)}">
-                <td colspan="5" class="text-center">No hay pagos registrados.</td>
-            </tr>
+        <tbody>
+        <tr th:each="pago : ${pagos}">
+            <td th:text="${pago.pagoId}"></td>
+            <td th:text="${pago.registro.registroId}"></td>
+            <td th:text="${pago.monto}"></td>
+            <td th:text="${pago.tipoPago}"></td>
+            <td th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+
+        <!-- Si no hay datos -->
+        <tr th:if="${#lists.isEmpty(pagos)}">
+            <td colspan="5" class="text-center text-muted">No hay pagos registrados.</td>
+        </tr>
         </tbody>
     </table>
 </div>
+
 </body>
 </html>
