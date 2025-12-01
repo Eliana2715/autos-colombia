@@ -148,7 +148,7 @@
         <tr th:each="r : ${registros}">
             <td th:text="${r.registroId}"></td>
             <td th:text="${r.vehiculo.placa}"></td>
-            <td th:text="${r.celda != null ? r.celda.codigo + ' (' + r.celda.estado + ')' : 'N/A'}"></td>
+            <td th:text="${r.celda != null ? r.celda.codigo : 'N/A'}"></td>
             <td th:text="${#temporals.format(r.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></td>
             <td th:text="${r.usuario.nombre}"></td>
 
@@ -156,7 +156,7 @@
                 <a th:href="@{/registros/salida/{id}(id=${r.registroId})}" class="btn btn-small btn-salida">🚦 Salida</a>
                 <a th:href="@{/registros/editar/{id}(id=${r.registroId})}" class="btn btn-small btn-editar">✏️ Editar</a>
                 <a th:href="@{/registros/eliminar/{id}(id=${r.registroId})}" class="btn btn-small btn-eliminar"
-                   onclick="return confirm('¿Está seguro de querer eliminar este registro?');">❌ Eliminar</a>
+                    onclick="return confirm('¿Está seguro de querer eliminar este registro?');">❌ Eliminar</a>
             </td>
         </tr>
 

@@ -2,7 +2,9 @@ package com.autoscolombia.parqueadero.service;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.stereotype.Service;
+
 import com.autoscolombia.parqueadero.model.Usuario;
 import com.autoscolombia.parqueadero.repository.UsuarioRepository;
 
@@ -41,5 +43,7 @@ public class UsuarioService {
     public void eliminar(Long id) {
         usuarioRepository.deleteById(id);
     }
+
+    
     
 }

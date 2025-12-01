@@ -22,7 +22,8 @@ public class RegistroService {
     private final UsuarioService usuarioService;
     private final VehiculoRepository vehiculoRepository;
 
-    public RegistroService(RegistroRepository registroRepository, CeldaService celdaService, UsuarioService usuarioService, VehiculoRepository vehiculoRepository) {
+    public RegistroService(RegistroRepository registroRepository, CeldaService celdaService,
+                            UsuarioService usuarioService, VehiculoRepository vehiculoRepository) {
         this.registroRepository = registroRepository;
         this.celdaService = celdaService;
         this.usuarioService = usuarioService;
@@ -37,47 +38,74 @@ public class RegistroService {
         return registroRepository.findByEstado("ABIERTA");
     }
 
-@Transactional
-public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Usuario usuario) {
+    
+    @Transactional
+    public void guardar(Registro registro, Long celdaId, Long usuarioId) {
 
-    // Validar celda
-    if (celdaId == null) {
-        throw new IllegalArgumentException("Debe seleccionar una celda válida");
+        Celda celda = celdaService.buscarPorId(celdaId);
+        if (celda == null) {
+            throw new RuntimeException("Celda no encontrada");
+        }
+
+        Usuario usuario = usuarioService.buscarPorId(usuarioId);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+
+        // Vehículo tomado del formulario
+        String placa = registro.getVehiculo().getPlaca();
+        String tipoVehiculo = registro.getVehiculo().getTipo();
+
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa).orElse(null);
+
+        if (vehiculo == null) {
+            vehiculo = new Vehiculo();
+            vehiculo.setPlaca(placa);
+            vehiculo.setTipo(tipoVehiculo);
+            vehiculo = vehiculoRepository.save(vehiculo);
+        }
+
+        registro.setVehiculo(vehiculo);
+        registro.setUsuario(usuario);
+        registro.setCelda(celda);
+        registro.setFechaIngreso(LocalDateTime.now());
+        registro.setEstado("ABIERTA");
+
+        registroRepository.save(registro);
+
+        celdaService.marcarOcupada(celda.getCeldaId());
     }
 
-    Celda celda = celdaService.buscarPorId(celdaId);
-    if (celda == null) {
-        throw new RuntimeException("Celda no encontrada con id: " + celdaId);
+
+    @Transactional
+    public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Usuario usuario) {
+
+        Celda celda = celdaService.buscarPorId(celdaId);
+        if (celda == null) {
+            throw new RuntimeException("Celda no encontrada con id: " + celdaId);
+        }
+
+        Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa).orElse(null);
+        if (vehiculo == null) {
+            vehiculo = new Vehiculo();
+            vehiculo.setPlaca(placa);
+            vehiculo.setTipo(tipoVehiculo);
+            vehiculo = vehiculoRepository.save(vehiculo);
+        }
+
+        Registro registro = new Registro();
+        registro.setVehiculo(vehiculo);
+        registro.setFechaIngreso(LocalDateTime.now());
+        registro.setEstado("ABIERTA");
+        registro.setUsuario(usuario);
+        registro.setCelda(celda);
+
+        registroRepository.save(registro);
+
+        celdaService.marcarOcupada(celda.getCeldaId());
     }
 
-    // 🔹 Buscar vehículo existente por placa
-    Vehiculo vehiculo = vehiculoRepository.findByPlaca(placa).orElse(null);
-    if (vehiculo == null) {
-        vehiculo = new Vehiculo();
-        vehiculo.setPlaca(placa);
-        vehiculo.setTipo(tipoVehiculo);
-        vehiculo = vehiculoRepository.save(vehiculo); // 🔹 Guardamos antes de asociar
-    }
-
-    // 🔹 Crear registro
-    Registro registro = new Registro();
-    registro.setVehiculo(vehiculo);
-    registro.setFechaIngreso(LocalDateTime.now());
-    registro.setEstado("ABIERTA");
-    registro.setUsuario(usuario);
-    registro.setCelda(celda);
-
-    registroRepository.save(registro);
-
-    // 🔹 Marcar celda como ocupada
-    celda.setEstado("ocupado");
-    celdaService.guardar(celda); // Método que haga save en CeldaRepository
-}
-
-
-    // ============================
-    // Registrar salida del parqueadero
-    // ============================
+    
     @Transactional
     public void registrarSalida(Long registroId) {
         Registro registro = registroRepository.findById(registroId)
@@ -86,18 +114,13 @@ public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Us
         registro.setFechaSalida(LocalDateTime.now());
         registro.setEstado("CERRADA");
 
-        // 🔹 NUEVO: Calcular tiempo y valor a pagar
         calcularTiempoYValor(registro);
 
         registroRepository.save(registro);
 
-        // Liberar celda
-        if (registro.getCelda() != null) {
-            celdaService.marcarDisponible(registro.getCelda().getCeldaId());
-        }
+        celdaService.marcarDisponible(registro.getCelda().getCeldaId());
     }
 
-    // 🔹 MÉTODO MOVIDO DESDE VehiculoService
     private void calcularTiempoYValor(Registro registro) {
         if (registro.getFechaIngreso() != null && registro.getFechaSalida() != null) {
             Duration duracion = Duration.between(registro.getFechaIngreso(), registro.getFechaSalida());
@@ -111,9 +134,7 @@ public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Us
         }
     }
 
-    // ===============================
-    // Métodos de utilidad para CRUD
-    // ===============================
+    
     public Registro buscarPorId(Long id) {
         return registroRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
@@ -122,20 +143,26 @@ public void registrarEntrada(String placa, String tipoVehiculo, Long celdaId, Us
     public void eliminar(Long id) {
         Registro registro = buscarPorId(id);
         registroRepository.delete(registro);
-        if (registro.getCelda() != null) {
-            celdaService.marcarDisponible(registro.getCelda().getCeldaId());
-        }
+        celdaService.marcarDisponible(registro.getCelda().getCeldaId());
     }
 
+    
+    @Transactional
     public void actualizar(Long registroId, String placa, String tipoVehiculo, Long celdaId, Long usuarioId) {
+
         Registro registro = buscarPorId(registroId);
 
-        registro.getVehiculo().setPlaca(placa);
-        registro.getVehiculo().setTipo(tipoVehiculo);
+        // Vehículo
+        Vehiculo vehiculo = registro.getVehiculo();
+        vehiculo.setPlaca(placa);
+        vehiculo.setTipo(tipoVehiculo);
+        vehiculoRepository.save(vehiculo);
 
+        // Celda
         Celda celda = celdaService.buscarPorId(celdaId);
         registro.setCelda(celda);
 
+        // Usuario
         Usuario usuario = usuarioService.buscarPorId(usuarioId);
         registro.setUsuario(usuario);
 

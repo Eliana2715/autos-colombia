@@ -3,6 +3,7 @@ package com.autoscolombia.parqueadero.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
 import com.autoscolombia.parqueadero.model.Celda;
 import com.autoscolombia.parqueadero.repository.CeldaRepository;
 
@@ -38,25 +39,22 @@ public class CeldaService {
     }
 
     public List<Celda> listarDisponibles() {
-        return celdaRepository.findByEstado("libre");  // assuming estado is 'libre' for free celdas
+        return celdaRepository.findByEstado("LIBRE");
     }
 
-    // ===========================================
-    // NUEVO: Método para marcar una celda como OCUPADA
-    // ===========================================
+
     public void marcarOcupada(Long celdaId) {
         Celda celda = buscarPorId(celdaId);
-        celda.setEstado("ocupada");  // Cambias el estado a ocupada
-        celdaRepository.save(celda);
+        celda.setEstado("OCUPADA");
+        guardar(celda);
     }
 
-    // ===========================================
-    // NUEVO: Método para marcar una celda como DISPONIBLE
-    // ===========================================
     public void marcarDisponible(Long celdaId) {
-        Celda celda = buscarPorId(celdaId);
-        celda.setEstado("libre");  // Cambias el estado a libre
-        celdaRepository.save(celda);
+    Celda celda = buscarPorId(celdaId);
+        celda.setEstado("LIBRE");
+        guardar(celda);
     }
+
+    
 }
 

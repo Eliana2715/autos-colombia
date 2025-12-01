@@ -61,49 +61,74 @@
 
 <div class="form-box">
 
-    <h3 class="text-center mb-3">🚗 Registrar ingreso de vehículo</h3>
+    <h3 class="text-center mb-3">
+        <span th:if="${registro != null}">✏️ Editar registro</span>
+        <span th:if="${registro == null}">🚗 Registrar ingreso de vehículo</span>
+    </h3>
+
     <hr class="mb-4">
 
-    <form th:action="@{/registros/entrada}" method="post">
+    <form th:object="${registro}"
+            th:action="${registro.registroId != null} ? @{/registros/actualizar} : @{/registros/guardar}"
+            method="post">
+
+        <!-- ID oculto -->
+        <input type="hidden" name="registroId"
+            th:if="${registro != null}"
+            th:value="${registro.registroId}" />
 
         <!-- PLACA -->
         <div class="mb-3">
             <label class="form-label fw-bold">Placa del vehículo</label>
-            <input type="text" name="placa" class="form-control shadow-sm" placeholder="Ej: ABC123" required>
+            <input type="text"
+                    class="form-control shadow-sm"
+                    placeholder="Ej: ABC123"
+                    th:field="*{vehiculo.placa}"
+                    required/>
+                
         </div>
 
         <!-- TIPO VEHÍCULO -->
         <div class="mb-3">
             <label class="form-label fw-bold">Tipo de vehículo</label>
-            <select name="tipoVehiculo" class="form-select shadow-sm" required>
+
+            <select th:field="*{vehiculo.tipo}" class="form-select shadow-sm" required>
                 <option value="">Seleccione...</option>
+
                 <option value="CARRO">Carro</option>
                 <option value="MOTO">Moto</option>
             </select>
         </div>
 
-        <!-- Celdas -->
+        <!-- CELDAS -->
         <div class="mb-3">
             <label class="form-label fw-bold">Celda disponible</label>
             <select name="celdaId" class="form-select shadow-sm" required>
                 <option value="" disabled selected>Seleccione una celda</option>
-                <option th:each="c : ${celdas}" th:value="${c.celdaId}" th:text="${c.codigo}"></option>
+                <option th:each="c : ${celdas}"
+                        th:value="${c.celdaId}"
+                        th:text="${c.codigo}"
+                        th:selected="${registro != null && registro.celda != null && c.celdaId == registro.celda.celdaId}">
+                </option>
+
             </select>
         </div>
 
-        <!-- Usuario -->
+        <!-- USUARIO -->
         <div class="mb-3">
-            <label class="form-label fw-bold">Usuario que registra</label>
+            <label class="form-label fw-bold">Usuario</label>
             <select name="usuarioId" class="form-select shadow-sm" required>
-                <option value="" disabled selected>Seleccione un usuario</option>
+                <option value="">Seleccione un usuario</option>
                 <option th:each="u : ${usuarios}"
                         th:value="${u.usuarioId}"
-                        th:text="${u.nombre}">
+                        th:text="${u.nombre}"
+                        th:selected="${registro != null && registro.usuario != null && u.usuarioId == registro.usuario.usuarioId}">
                 </option>
+
             </select>
         </div>
 
-        <!-- Botones -->
+        <!-- BOTONES -->
         <div class="d-flex justify-content-between mt-4">
 
             <a th:href="@{/registros/activos}" class="btn btn-secondary btn-custom">
@@ -111,7 +136,7 @@
             </a>
 
             <button type="submit" class="btn btn-success btn-custom">
-                ✔ Registrar
+                ✔ <span th:text="${registro != null} ? 'Guardar cambios' : 'Registrar'"></span>
             </button>
 
             <a th:href="@{/menu}" class="btn btn-primary btn-custom">
